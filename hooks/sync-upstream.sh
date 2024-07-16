@@ -1,8 +1,10 @@
 #!/bin/bash
 GITHUB_TOKEN="${GITHUB_TOKEN}"
-
+# Debugging: Print current directory
+echo "Current directory: $(pwd)"
 # Source the common functions
-source utils/fork_utils.sh
+echo "$(dirname "$0")"
+source "$(dirname "$0")/utils/fork-utils.sh"
 
 if [[ ! -f ".github/UPSTREAM" ]]; then
   log "INFO" "No .github/UPSTREAM file found. Exiting."
