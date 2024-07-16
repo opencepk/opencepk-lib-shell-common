@@ -9,7 +9,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 echo "$SCRIPT_DIR"
 # Source fork-utils.sh using the calculated directory
 source "${SCRIPT_DIR}/utils/fork-utils.sh"
-echo "$(ls -R)"
+echo "$(ls -aR)"
 
 if [[ ! -f ".github/UPSTREAM" ]]; then
   log "INFO" "No .github/UPSTREAM file found. Exiting."
