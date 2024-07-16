@@ -1,11 +1,16 @@
 #!/bin/bash
 GITHUB_TOKEN="${GITHUB_TOKEN}"
 # Debugging: Print current directory
-echo "Current directory: $(pwd)"
-# Source the common functions
-echo "$(dirname "$0")"
-# Dynamically find the script's directory
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+# echo "Current directory: $(pwd)"
+# # Source the common functions
+# echo "$(dirname "$0")"
+# # Dynamically find the script's directory
+# SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+# globals variables
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+readonly SCRIPT_DIR
+# shellcheck source=_common.sh
+. "$SCRIPT_DIR/fork_utils.sh"
 echo "$SCRIPT_DIR"
 # Source fork-utils.sh using the calculated directory
 source "${SCRIPT_DIR}/utils/fork-utils.sh"
