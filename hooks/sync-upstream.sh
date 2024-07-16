@@ -10,11 +10,11 @@ GITHUB_TOKEN="${GITHUB_TOKEN}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 readonly SCRIPT_DIR
 # shellcheck source=_common.sh
-. "$SCRIPT_DIR/_common.sh"
+# . "$SCRIPT_DIR/_common.sh"
 echo "xxxx   xxxxx $SCRIPT_DIR"
 # Source fork-utils.sh using the calculated directory
-source "${SCRIPT_DIR}/utils/fork-utils.sh"
-echo "$(ls hooks/utils)"
+source "${SCRIPT_DIR}/utils/fork_utils.sh"
+echo "$(ls ${SCRIPT_DIR}/utils)"
 
 if [[ ! -f ".github/UPSTREAM" ]]; then
   log "INFO" "No .github/UPSTREAM file found. Exiting."
