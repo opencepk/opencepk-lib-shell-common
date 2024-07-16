@@ -2,5 +2,5 @@
 - id: sync-with-upstream
   name: sync-with-upstream
   description: Sync forked repo with upstream
-  entry: hooks/sync-with-upstream.sh
+  entry: hooks/sync-upstream.sh
   language: script
