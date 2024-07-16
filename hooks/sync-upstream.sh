@@ -2,7 +2,7 @@
 GITHUB_TOKEN="${GITHUB_TOKEN}"
 
 # Source the common functions
-source scripts/utils/fork_utils.sh
+source ./utils/fork_utils.sh
 
 if [[ ! -f ".github/UPSTREAM" ]]; then
   log "INFO" "No .github/UPSTREAM file found. Exiting."
