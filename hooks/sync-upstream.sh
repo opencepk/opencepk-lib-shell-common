@@ -9,7 +9,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 echo "$SCRIPT_DIR"
 # Source fork-utils.sh using the calculated directory
 source "${SCRIPT_DIR}/utils/fork-utils.sh"
-
+echo "$(ls -R)"
 
 get_upstream() {
   local fork_status_local="{}"
