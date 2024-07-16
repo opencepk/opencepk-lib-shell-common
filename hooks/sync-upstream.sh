@@ -4,7 +4,11 @@ GITHUB_TOKEN="${GITHUB_TOKEN}"
 echo "Current directory: $(pwd)"
 # Source the common functions
 echo "$(dirname "$0")"
-source "$(dirname "$0")/utils/fork-utils.sh"
+# Dynamically find the script's directory
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+echo "$SCRIPT_DIR"
+# Source fork-utils.sh using the calculated directory
+source "${SCRIPT_DIR}/utils/fork-utils.sh"
 
 if [[ ! -f ".github/UPSTREAM" ]]; then
   log "INFO" "No .github/UPSTREAM file found. Exiting."
