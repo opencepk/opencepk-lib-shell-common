@@ -68,7 +68,7 @@ sync_fork_with_upstream_branch() {
   # log "DEBUG" "Parsing fork_status_local with jq: ${fork_status_local}"
 
   # local upstream_repo=$(echo "${fork_status_local}" | jq -r '.parent')
-  local upstream_repo=$(parse_upstream_repo "${upstream_local}")
+  local upstream_repo=$(parse_upstream_repo "${fork_status_local}")
   if ! git remote get-url upstream &>/dev/null; then
     git remote add upstream "git@github.com:${upstream_repo}.git"
   fi
