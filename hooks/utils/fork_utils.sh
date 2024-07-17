@@ -72,7 +72,7 @@ sync_fork_with_upstream_branch() {
   if ! git remote get-url upstream &>/dev/null; then
     git remote add upstream "git@github.com:${upstream_repo}.git"
   fi
-
+  log "INFO" "upstream_repo is: $upstream_repo"
   local fetch_output=$(git fetch upstream 2>&1)
   local fetch_exit_status=$?
 
@@ -82,7 +82,10 @@ sync_fork_with_upstream_branch() {
   else
     log "INFO" "Successfully fetched upstream changes."
   fi
-
+  test=$(git remote -v)
+  branches_test=$(git branch -r | grep upstream/feat/add-initial-sync-flow)
+  log "INFO" "Remote is: $test"
+  log "INFO" "Branches are: $branches_test"
   if git diff --quiet HEAD upstream/${upstream_branch}; then
     log "INFO" "Branch is up-to-date with 'upstream/${upstream_branch}'."
     exit 0
