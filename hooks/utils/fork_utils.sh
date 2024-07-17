@@ -54,18 +54,26 @@ merge_upstream_changes() {
     log "INFO" "Branch is up-to-date with 'upstream/${upstream_branch}'."
     exit 0
   else
-    if git merge --no-edit upstream/${upstream_branch} 2>&1; then
-      log "INFO" "Merge successful. Branch is synced with upstream."
-      exit 0
+    local merge_output=$(git merge --no-edit upstream/${upstream_branch} 2>&1)
+    local merge_exit_status=$?
+
+    if [[ $merge_exit_status -eq 0 ]]; then
+      if [[ $merge_output == *"Already up to date."* ]]; then
+        log "INFO" "No changes were necessary; your branch was already up to date."
+        exit 0
+      else
+        log "INFO" "Merge successful. Precommit will exit with error though as the branch was not synced with upstream. Rerun the precommit to check if everything is ready to push."
+        exit 1
+      fi
     else
-      log "ERROR" "Failed to automatically sync with 'upstream/${upstream_branch}'."
+      log "ERROR" "Failed to automatically sync with 'upstream/${upstream_branch}'. Please resolve conflicts manually or run pre-commit run --all locally."
       exit 1
     fi
   fi
 }
 
 sync_fork_with_upstream_branch() {
-  local upstream_content=$1
+  local upstream_content=$(get_upstream)
   local upstream_branch="feat/add-initial-sync-flow"
   ensure_jq_installed
   # Remove unnecessary escape characters
@@ -93,26 +101,27 @@ sync_fork_with_upstream_branch() {
   # branches_test=$(git branch -r | grep upstream/feat/add-initial-sync-flow)
   # log "INFO" "Remote is: $test"
   # log "INFO" "Branches are: $branches_test"
-  if git diff --quiet HEAD upstream/${upstream_branch}; then
-    log "INFO" "Branch is up-to-date with 'upstream/${upstream_branch}'."
-    exit 0
-  else
-    local merge_output=$(git merge --no-edit upstream/${upstream_branch} 2>&1)
-    local merge_exit_status=$?
+  merge_upstream_changes "${upstream_branch}"
+  # if git diff --quiet HEAD upstream/${upstream_branch}; then
+  #   log "INFO" "Branch is up-to-date with 'upstream/${upstream_branch}'."
+  #   exit 0
+  # else
+  #   local merge_output=$(git merge --no-edit upstream/${upstream_branch} 2>&1)
+  #   local merge_exit_status=$?
 
-    if [[ $merge_exit_status -eq 0 ]]; then
-      if [[ $merge_output == *"Already up to date."* ]]; then
-        log "INFO" "No changes were necessary; your branch was already up to date."
-        exit 0
-      else
-        log "INFO" "Merge successful. Precommit will exit with error though as the branch was not synced with upstream. Rerun the precommit to check if everything is ready to push."
-        exit 1
-      fi
-    else
-      log "ERROR" "Failed to automatically sync with 'upstream/${upstream_branch}'. Please resolve conflicts manually or run pre-commit run --all locally."
-      exit 1
-    fi
-  fi
+  #   if [[ $merge_exit_status -eq 0 ]]; then
+  #     if [[ $merge_output == *"Already up to date."* ]]; then
+  #       log "INFO" "No changes were necessary; your branch was already up to date."
+  #       exit 0
+  #     else
+  #       log "INFO" "Merge successful. Precommit will exit with error though as the branch was not synced with upstream. Rerun the precommit to check if everything is ready to push."
+  #       exit 1
+  #     fi
+  #   else
+  #     log "ERROR" "Failed to automatically sync with 'upstream/${upstream_branch}'. Please resolve conflicts manually or run pre-commit run --all locally."
+  #     exit 1
+  #   fi
+  # fi
 }
 
 log() {

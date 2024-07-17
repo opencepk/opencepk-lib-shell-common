@@ -18,4 +18,4 @@ if [[ "${upstream}" = "{}" ]]; then
   exit 0
 fi
 
-sync_fork_with_upstream_branch "${upstream}"
+sync_fork_with_upstream_branch
