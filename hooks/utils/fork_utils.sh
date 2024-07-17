@@ -8,22 +8,15 @@ log() {
 }
 
 get_upstream() {
-  local fork_status_local="{}"
-  if [ -f ".github/UPSTREAM" ]; then
-    log "INFO" "Using .github/UPSTREAM file for fork status."
-    fork_status_local=$(cat ".github/UPSTREAM")
+  upstream_local=""  
+  if [[  $(cat .github/UPSTREAM | grep -v '^#' | wc -l) != 1 ]]; then
+      log "INFO" "contents of .github/UPSTREAM not in valid format - can contain only 1 non-comment line with git url"
+      exit 1
   else
-    log "WARN" "No .github/UPSTREAM file found. Please check the PR in the repo. If you have pushed your changes and created the PR there should be a PR creating UPSTREAM file."
-    echo "{}"
+      upstream_local=$(cat .github/UPSTREAM | grep -v '^#')
   fi
-  echo "$fork_status_local"
-}
-
-ensure_jq_installed() {
-  if ! command -v jq &>/dev/null; then
-    log "ERROR" "jq is not installed. Please install jq to parse JSON data."
-    exit 1
-  fi
+  log "INFO" "upstream_local is: $upstream_local"
+  echo "$upstream_local"
 }
 
 parse_upstream_repo() {
@@ -83,8 +76,7 @@ merge_upstream_changes() {
 sync_fork_with_upstream_branch() {
   log "INFO" "Syncing fork with upstream branch."
   local upstream_content=$(get_upstream)
-  local upstream_branch="main"
-  ensure_jq_installed
+  local upstream_branch="feat/ICE-989"
   # local upstream_repo=$(parse_upstream_repo "${upstream_content}")
   local upstream_repo=${upstream_content}
   log "INFO" "upstream_repo is: $upstream_repo"
