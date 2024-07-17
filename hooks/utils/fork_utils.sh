@@ -64,10 +64,12 @@ merge_upstream_changes() {
         exit 0
       else
         log "INFO" "Merge successful. Precommit will exit with error though as the branch was not synced with upstream. Rerun the precommit to check if everything is ready to push."
+        git status
         exit 1
       fi
     else
       log "ERROR" "Failed to automatically sync with 'upstream/${upstream_branch}'. Please resolve conflicts manually or run pre-commit run --all locally."
+      git status
       exit 1
     fi
   fi
@@ -76,7 +78,7 @@ merge_upstream_changes() {
 sync_fork_with_upstream_branch() {
   log "INFO" "Syncing fork with upstream branch."
   local upstream_content=$(get_upstream)
-  local upstream_branch="feat/ICE-989"
+  local upstream_branch="main"
   # local upstream_repo=$(parse_upstream_repo "${upstream_content}")
   local upstream_repo=${upstream_content}
   log "INFO" "upstream_repo is: $upstream_repo"
