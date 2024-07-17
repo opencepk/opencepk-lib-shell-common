@@ -85,7 +85,7 @@ sync_fork_with_upstream_branch() {
   local upstream_branch="main"
   ensure_jq_installed
   # local upstream_repo=$(parse_upstream_repo "${upstream_content}")
-  local upstream_repo=upstream_content
+  local upstream_repo=${upstream_content}
   log "INFO" "upstream_repo is: $upstream_repo"
   add_remote_upstream "${upstream_repo}"
   fetch_upstream_changes
