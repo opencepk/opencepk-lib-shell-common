@@ -1,4 +1,11 @@
 #!/bin/bash
+log() {
+  local log_level=$1
+  local message=$2
+  local timestamp
+  timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+  echo "${timestamp} [${log_level}] ${message}" >&2
+}
 
 get_upstream() {
   local fork_status_local="{}"
@@ -11,7 +18,6 @@ get_upstream() {
   fi
   echo "$fork_status_local"
 }
-
 
 ensure_jq_installed() {
   if ! command -v jq &>/dev/null; then
@@ -50,6 +56,7 @@ fetch_upstream_changes() {
 
 merge_upstream_changes() {
   local upstream_branch=$1
+  log "INFO" "Merging upstream changes."
   if git diff --quiet HEAD upstream/${upstream_branch}; then
     log "INFO" "Branch is up-to-date with 'upstream/${upstream_branch}'."
     exit 0
@@ -73,61 +80,13 @@ merge_upstream_changes() {
 }
 
 sync_fork_with_upstream_branch() {
+  log "INFO" "Syncing fork with upstream branch."
   local upstream_content=$(get_upstream)
   local upstream_branch="feat/add-initial-sync-flow"
   ensure_jq_installed
-  # Remove unnecessary escape characters
-  # fork_status_local=$(echo "${fork_status_local}" | sed 's/\\\"/\"/g')
-  # log "DEBUG" "Parsing fork_status_local with jq: ${fork_status_local}"
-
-  # local upstream_repo=$(echo "${fork_status_local}" | jq -r '.parent')
   local upstream_repo=$(parse_upstream_repo "${upstream_content}")
   log "INFO" "upstream_repo is: $upstream_repo"
-  # if ! git remote get-url upstream &>/dev/null; then
-  #   git remote add upstream "git@github.com:${upstream_repo}.git"
-  # fi
   add_remote_upstream "${upstream_repo}"
-  # local fetch_output=$(git fetch upstream 2>&1)
-  # local fetch_exit_status=$?
-
-  # if [[ $fetch_exit_status -ne 0 ]]; then
-  #   log "ERROR" "Error fetching upstream changes: $fetch_output"
-  #   exit 1
-  # else
-  #   log "INFO" "Successfully fetched upstream changes."
-  # fi
   fetch_upstream_changes
-  # test=$(git remote -v)
-  # branches_test=$(git branch -r | grep upstream/feat/add-initial-sync-flow)
-  # log "INFO" "Remote is: $test"
-  # log "INFO" "Branches are: $branches_test"
   merge_upstream_changes "${upstream_branch}"
-  # if git diff --quiet HEAD upstream/${upstream_branch}; then
-  #   log "INFO" "Branch is up-to-date with 'upstream/${upstream_branch}'."
-  #   exit 0
-  # else
-  #   local merge_output=$(git merge --no-edit upstream/${upstream_branch} 2>&1)
-  #   local merge_exit_status=$?
-
-  #   if [[ $merge_exit_status -eq 0 ]]; then
-  #     if [[ $merge_output == *"Already up to date."* ]]; then
-  #       log "INFO" "No changes were necessary; your branch was already up to date."
-  #       exit 0
-  #     else
-  #       log "INFO" "Merge successful. Precommit will exit with error though as the branch was not synced with upstream. Rerun the precommit to check if everything is ready to push."
-  #       exit 1
-  #     fi
-  #   else
-  #     log "ERROR" "Failed to automatically sync with 'upstream/${upstream_branch}'. Please resolve conflicts manually or run pre-commit run --all locally."
-  #     exit 1
-  #   fi
-  # fi
-}
-
-log() {
-  local log_level=$1
-  local message=$2
-  local timestamp
-  timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-  echo "${timestamp} [${log_level}] ${message}" >&2
 }
