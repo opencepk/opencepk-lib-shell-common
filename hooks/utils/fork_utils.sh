@@ -62,7 +62,7 @@ merge_upstream_changes() {
 sync_fork_with_upstream_branch() {
   local fork_status_local=$1
   local upstream_branch="feat/add-initial-sync-flow"
-
+  ensure_jq_installed
   # Remove unnecessary escape characters
   # fork_status_local=$(echo "${fork_status_local}" | sed 's/\\\"/\"/g')
   # log "DEBUG" "Parsing fork_status_local with jq: ${fork_status_local}"
