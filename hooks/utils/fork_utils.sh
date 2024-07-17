@@ -83,10 +83,10 @@ sync_fork_with_upstream_branch() {
     log "INFO" "Successfully fetched upstream changes."
   fi
   echo "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-  test=$(git remote -v)
-  branches_test=$(git branch -r | grep upstream/feat/add-initial-sync-flow)
-  log "INFO" "Remote is: $test"
-  log "INFO" "Branches are: $branches_test"
+  # test=$(git remote -v)
+  # branches_test=$(git branch -r | grep upstream/feat/add-initial-sync-flow)
+  # log "INFO" "Remote is: $test"
+  # log "INFO" "Branches are: $branches_test"
   if git diff --quiet HEAD upstream/${upstream_branch}; then
     log "INFO" "Branch is up-to-date with 'upstream/${upstream_branch}'."
     exit 0
