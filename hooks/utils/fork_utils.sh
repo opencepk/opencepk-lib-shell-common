@@ -37,8 +37,9 @@ add_remote_upstream() {
   log "INFO" "Adding upstream remote."
   local upstream_repo=$1
   if ! git remote get-url upstream &>/dev/null; then
-    git remote add upstream "git@github.com:${upstream_repo}.git"
+    git remote add upstream "${upstream_repo}"
   fi
+  git remote -v
 }
 
 fetch_upstream_changes() {
