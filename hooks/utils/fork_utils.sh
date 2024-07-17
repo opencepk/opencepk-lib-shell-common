@@ -28,6 +28,7 @@ parse_upstream_repo() {
 }
 
 add_remote_upstream() {
+  log "INFO" "Adding upstream remote."
   local upstream_repo=$1
   if ! git remote get-url upstream &>/dev/null; then
     git remote add upstream "git@github.com:${upstream_repo}.git"
@@ -35,8 +36,12 @@ add_remote_upstream() {
 }
 
 fetch_upstream_changes() {
-  if ! git fetch upstream 2>&1; then
-    log "ERROR" "Error fetching upstream changes."
+  log "INFO" "Fetching upstream changes."
+  local fetch_output=$(git fetch upstream 2>&1)
+  local fetch_exit_status=$?
+
+  if [[ $fetch_exit_status -ne 0 ]]; then
+    log "ERROR" "Error fetching upstream changes: $fetch_output"
     exit 1
   else
     log "INFO" "Successfully fetched upstream changes."
@@ -60,7 +65,7 @@ merge_upstream_changes() {
 }
 
 sync_fork_with_upstream_branch() {
-  local fork_status_local=$1
+  local upstream_content=$1
   local upstream_branch="feat/add-initial-sync-flow"
   ensure_jq_installed
   # Remove unnecessary escape characters
@@ -68,23 +73,22 @@ sync_fork_with_upstream_branch() {
   # log "DEBUG" "Parsing fork_status_local with jq: ${fork_status_local}"
 
   # local upstream_repo=$(echo "${fork_status_local}" | jq -r '.parent')
-  local upstream_repo=$(parse_upstream_repo "${fork_status_local}")
-  if ! git remote get-url upstream &>/dev/null; then
-    git remote add upstream "git@github.com:${upstream_repo}.git"
-  fi
+  local upstream_repo=$(parse_upstream_repo "${upstream_content}")
   log "INFO" "upstream_repo is: $upstream_repo"
-  local fetch_output=$(git fetch upstream 2>&1)
-  local fetch_exit_status=$?
+  # if ! git remote get-url upstream &>/dev/null; then
+  #   git remote add upstream "git@github.com:${upstream_repo}.git"
+  # fi
+  add_remote_upstream "${upstream_repo}"
+  # local fetch_output=$(git fetch upstream 2>&1)
+  # local fetch_exit_status=$?
 
-  if [[ $fetch_exit_status -ne 0 ]]; then
-    log "ERROR" "Error fetching upstream changes: $fetch_output"
-    exit 1
-  else
-    log "INFO" "Successfully fetched upstream changes."
-  fi
-  echo "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-  git remote -v
-  git branch -r | grep upstream/feat/add-initial-sync-flow
+  # if [[ $fetch_exit_status -ne 0 ]]; then
+  #   log "ERROR" "Error fetching upstream changes: $fetch_output"
+  #   exit 1
+  # else
+  #   log "INFO" "Successfully fetched upstream changes."
+  # fi
+  fetch_upstream_changes
   # test=$(git remote -v)
   # branches_test=$(git branch -r | grep upstream/feat/add-initial-sync-flow)
   # log "INFO" "Remote is: $test"
