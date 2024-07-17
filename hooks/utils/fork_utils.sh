@@ -1,48 +1,35 @@
 #!/bin/bash
 
-log() {
-  local log_level=$1
-  local message=$2
-  local timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-  echo "${timestamp} [${log_level}] ${message}" >&2
-}
-
 get_upstream() {
-  local upstream_local="{}"
-  if [[ -f ".github/UPSTREAM" ]]; then
+  local fork_status_local="{}"
+  if [ -f ".github/UPSTREAM" ]; then
     log "INFO" "Using .github/UPSTREAM file for fork status."
-    upstream_local=$(<".github/UPSTREAM")
+    fork_status_local=$(cat ".github/UPSTREAM")
   else
-    log "WARN" "No .github/UPSTREAM file found. Please check the PR in the repo."
+    log "WARN" "No .github/UPSTREAM file found. Please check the PR in the repo. If you have pushed your changes and created the PR there should be a PR creating UPSTREAM file."
+    echo "{}"
   fi
-  echo "$upstream_local"
+  echo "$fork_status_local"
 }
 
 sync_fork_with_upstream_branch() {
-  local upstream_local=$1
+  local fork_status_local=$1
   local upstream_branch="feat/add-initial-sync-flow"
 
-  # Ensure jq is available
-  if ! command -v jq &>/dev/null; then
-    log "ERROR" "jq is not installed. Please install jq to parse JSON data."
-    exit 1
-  fi
+  # Remove unnecessary escape characters
+  fork_status_local=$(echo "${fork_status_local}" | sed 's/\\\"/\"/g')
+  log "DEBUG" "Parsing fork_status_local with jq: ${fork_status_local}"
 
-  upstream_local=$(echo "${upstream_local}" | sed 's/\\\"/\"/g')
-  log "DEBUG" "Parsing upstream_local with jq: ${upstream_local}"
-
-  local upstream_repo=$(echo "${upstream_local}" | jq -r '.parent')
-  if [[ -z "$upstream_repo" ]]; then
-    log "ERROR" "Failed to parse upstream repository from fork status."
-    exit 1
-  fi
-
+  local upstream_repo=$(echo "${fork_status_local}" | jq -r '.parent')
   if ! git remote get-url upstream &>/dev/null; then
     git remote add upstream "git@github.com:${upstream_repo}.git"
   fi
 
-  if ! git fetch upstream 2>&1; then
-    log "ERROR" "Error fetching upstream changes."
+  local fetch_output=$(git fetch upstream 2>&1)
+  local fetch_exit_status=$?
+
+  if [[ $fetch_exit_status -ne 0 ]]; then
+    log "ERROR" "Error fetching upstream changes: $fetch_output"
     exit 1
   else
     log "INFO" "Successfully fetched upstream changes."
@@ -52,12 +39,28 @@ sync_fork_with_upstream_branch() {
     log "INFO" "Branch is up-to-date with 'upstream/${upstream_branch}'."
     exit 0
   else
-    if git merge --no-edit upstream/${upstream_branch} 2>&1; then
-      log "INFO" "Merge successful. Branch is synced with upstream."
-      exit 0
+    local merge_output=$(git merge --no-edit upstream/${upstream_branch} 2>&1)
+    local merge_exit_status=$?
+
+    if [[ $merge_exit_status -eq 0 ]]; then
+      if [[ $merge_output == *"Already up to date."* ]]; then
+        log "INFO" "No changes were necessary; your branch was already up to date."
+        exit 0
+      else
+        log "INFO" "Merge successful. Precommit will exit with error though as the branch was not synced with upstream. Rerun the precommit to check if everything is ready to push."
+        exit 1
+      fi
     else
-      log "ERROR" "Failed to automatically sync with 'upstream/${upstream_branch}'."
+      log "ERROR" "Failed to automatically sync with 'upstream/${upstream_branch}'. Please resolve conflicts manually or run pre-commit run --all locally."
       exit 1
     fi
   fi
+}
+
+log() {
+  local log_level=$1
+  local message=$2
+  local timestamp
+  timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+  echo "${timestamp} [${log_level}] ${message}" >&2
 }
