@@ -19,13 +19,6 @@ get_upstream() {
   echo "$upstream_local"
 }
 
-parse_upstream_repo() {
-  local upstream_local=$1
-  upstream_local=$(echo "${upstream_local}" | sed 's/\\\"/\"/g')
-  log "DEBUG" "Parsing upstream_local with jq: ${upstream_local}"
-  echo "${upstream_local}" | jq -r '.parent'
-}
-
 add_remote_upstream() {
   log "INFO" "Adding upstream remote."
   local upstream_repo=$1
@@ -79,7 +72,6 @@ sync_fork_with_upstream_branch() {
   log "INFO" "Syncing fork with upstream branch."
   local upstream_content=$(get_upstream)
   local upstream_branch="main"
-  # local upstream_repo=$(parse_upstream_repo "${upstream_content}")
   local upstream_repo=${upstream_content}
   log "INFO" "upstream_repo is: $upstream_repo"
   add_remote_upstream "${upstream_repo}"
