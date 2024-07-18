@@ -8,7 +8,7 @@ log() {
 }
 
 get_upstream() {
-  upstream_local=""  
+  upstream_local=""
   if [[  $(cat .github/UPSTREAM | grep -v '^#' | wc -l) != 1 ]]; then
       log "INFO" "contents of .github/UPSTREAM not in valid format - can contain only 1 non-comment line with git url"
       exit 1

@@ -27,7 +27,7 @@ The following is an example of how to use it.
     hooks:
       - id: sync-with-upstream
         name: sync-with-upstream
-        pass_filenames: false 
+        pass_filenames: false
 ```
 
 ## Contributing
