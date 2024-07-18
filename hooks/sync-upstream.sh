@@ -11,7 +11,7 @@ if [[ ! -f ".github/UPSTREAM" ]]; then
 fi
 
 upstream=$(get_upstream)
-log "DEBUG" "fork_status is ${upstream}"
+log "DEBUG" "Content of UPSTREAM is ${upstream}"
 
 if [[ "${upstream}" = "{}" ]]; then
   log "INFO" "This repository is not a fork or the upstream information is empty."
