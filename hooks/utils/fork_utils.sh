@@ -56,7 +56,7 @@ merge_upstream_changes() {
         log "INFO" "No changes were necessary; your branch was already up to date."
         exit 0
       else
-        log "INFO" "Merge successful. Precommit will exit with error though as the branch was not synced with upstream. Rerun the precommit to check if everything is ready to push."
+        log "INFO" "Merge successful. Precommit will exit with error though as the branch was not synced with upstream. Resolve conflicts if any and rerun the precommit to check if everything is ready to push. "
         git status
         exit 1
       fi
