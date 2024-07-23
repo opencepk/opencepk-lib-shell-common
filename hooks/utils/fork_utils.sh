@@ -9,11 +9,11 @@ log() {
 
 get_upstream() {
   upstream_local=""
-  if [[  $(cat .github/UPSTREAM | grep -v '^#' | wc -l) != 1 ]]; then
+  upstream_line_count=$(cat .github/UPSTREAM | grep -vE '(^#|^$)' | wc -l | xargs)
+  if [[ $upstream_line_count != 1 ]]; then
       log "INFO" "contents of .github/UPSTREAM not in valid format - can contain only 1 non-comment line with git url"
       exit 1
   else
-      # remove comments and empty lines
       upstream_local=$(cat .github/UPSTREAM | grep -vE '(^#|^$)')
   fi
   log "INFO" "upstream_local is: $upstream_local"
