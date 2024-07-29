@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+# set -e
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 # Source fork-utils.sh using the calculated directory
 source "${SCRIPT_DIR}/utils/fork_utils.sh"
