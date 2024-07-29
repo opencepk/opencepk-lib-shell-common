@@ -10,7 +10,7 @@ fi
 
 # Path to the commit-msg hook
 HOOK_PATH=".git/hooks/commit-msg"
-rm -rf $HOOK_PATH
+rm -rf $HOOK_PATH || true
 # Desired content of the commit-msg hook
 read -r -d '' HOOK_CONTENT <<'EOF'
 #!/bin/bash
