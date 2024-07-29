@@ -1,10 +1,16 @@
 #!/bin/bash
-
+set -e
+readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+# Source fork-utils.sh using the calculated directory
+source "${SCRIPT_DIR}/utils/fork_utils.sh"
 # Exit the script if running in a CI environment
 if [ "$CI" == "true" ]; then
    exit 0
 fi
-rm -rf .git/hooks/commit-msg
+
+# Path to the commit-msg hook
+HOOK_PATH=".git/hooks/commit-msg"
+rm -rf $HOOK_PATH
 # Desired content of the commit-msg hook
 read -r -d '' HOOK_CONTENT <<'EOF'
 #!/bin/bash
@@ -30,8 +36,6 @@ check_branch_name() {
     fi
 }
 
-
-
 # Check the branch name before allowing the commit
 check_branch_name
 
@@ -40,7 +44,6 @@ COMMIT_MSG_FILE=$1
 
 # Regular expression for the required commit message format
 PATTERN="^(feat|fix|build|breaking|chore|ci|docs|perf|refactor|revert|test)\/[a-zA-Z0-9-]+)?(:)? *.+$"
-# PATTERN="^(feat|fix|build|breaking|chore|ci|docs|perf|refactor|revert|test)\/[a-zA-Z0-9-]+(: *.+)?$"
 
 # Read the commit message
 COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
@@ -61,17 +64,15 @@ fi
 exit 0
 EOF
 
-# Path to the commit-msg hook
-HOOK_PATH=".git/hooks/commit-msg"
-
 # Check if the hook exists and matches the desired content
-if [ -f "$HOOK_PATH" ]; then
-   CURRENT_CONTENT=$(cat "$HOOK_PATH")
-   if [ "$CURRENT_CONTENT" == "$HOOK_CONTENT" ]; then
-      # The hook exists and matches the desired content; no action needed
-      exit 0
-   fi
-fi
+# if [ -f "$HOOK_PATH" ]; then
+#    CURRENT_CONTENT=$(cat "$HOOK_PATH")
+#    if [ "$CURRENT_CONTENT" == "$HOOK_CONTENT" ]; then
+#       # The hook exists and matches the desired content; no action needed
+#       log "DEBUG" "The commit-msg hook already exists and matches the desired content."
+#       exit 0
+#    fi
+# fi
 
 # Write the desired content to the commit-msg hook, creating or updating it
 echo "$HOOK_CONTENT" >"$HOOK_PATH"
