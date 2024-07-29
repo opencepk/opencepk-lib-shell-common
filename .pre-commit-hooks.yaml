@@ -4,3 +4,9 @@
   description: Sync forked repo with upstream
   entry: hooks/git-upstream-sync.sh
   language: script
+
+- id: check-commit-msg
+  name: check-commit-msg
+  description: Check commit message format
+  entry: hooks/check-commit-msg.sh
+  language: script
