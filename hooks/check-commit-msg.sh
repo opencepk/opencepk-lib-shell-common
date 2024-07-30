@@ -1,5 +1,4 @@
 #!/bin/bash
-# set -e
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 # Source fork-utils.sh using the calculated directory
 source "${SCRIPT_DIR}/utils/fork_utils.sh"
@@ -10,7 +9,9 @@ fi
 
 # Path to the commit-msg hook
 HOOK_PATH=".git/hooks/commit-msg"
+
 rm -rf $HOOK_PATH || true
+
 # Desired content of the commit-msg hook
 read -r -d '' HOOK_CONTENT <<'EOF'
 #!/bin/bash
@@ -43,7 +44,7 @@ check_branch_name
 COMMIT_MSG_FILE=$1
 
 # Regular expression for the required commit message format
-PATTERN="^(feat|fix|build|breaking|chore|ci|docs|perf|refactor|revert|test)\/[a-zA-Z0-9-]+)?(:)? *.+$"
+PATTERN="^(feat|fix|build|breaking|chore|ci|docs|perf|refactor|revert|test)\/[a-zA-Z0-9-]+)(:)? *.+$"
 
 # Read the commit message
 COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
