@@ -24,10 +24,6 @@ check_branch_name() {
     # Regular expression for the required branch name format
     BRANCH_PATTERN="^(feat|fix|build|breaking|chore|ci|docs|perf|refactor|revert|test)\/[a-zA-Z0-9-]+$"
 
-    # Debug: Print the branch name and pattern
-    echo "DEBUG: Branch name: '$BRANCH_NAME'"
-    echo "DEBUG: Branch pattern: '$BRANCH_PATTERN'"
-
     # Check if the branch name matches the pattern
     if [[ ! "$BRANCH_NAME" =~ $BRANCH_PATTERN ]]; then
         echo "ERROR: Branch name does not follow the required format 'git branch -m type/jira-number'"
@@ -49,14 +45,9 @@ PATTERN="^(feat|fix|build|breaking|chore|ci|docs|perf|refactor|revert|test)\/([a
 # Read the commit message
 COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
 
-# Debug: Print the commit message and pattern
-echo "DEBUG: Commit message: '$COMMIT_MSG'"
-echo "DEBUG: Pattern: '$PATTERN'"
-
 # Check if the commit message matches the pattern
 if [[ ! "$COMMIT_MSG" =~ $PATTERN ]]; then
     echo "ERROR: Commit message does not follow the required format 'type/jira-ticket: description'"
-    echo "DEBUG: Commit message does not match the pattern"
     exit 1
 fi
 
@@ -64,16 +55,6 @@ fi
 # If the script reaches this point, the commit message is valid
 exit 0
 EOF
-
-# Check if the hook exists and matches the desired content
-# if [ -f "$HOOK_PATH" ]; then
-#    CURRENT_CONTENT=$(cat "$HOOK_PATH")
-#    if [ "$CURRENT_CONTENT" == "$HOOK_CONTENT" ]; then
-#       # The hook exists and matches the desired content; no action needed
-#       log "DEBUG" "The commit-msg hook already exists and matches the desired content."
-#       exit 0
-#    fi
-# fi
 
 # Write the desired content to the commit-msg hook, creating or updating it
 echo "$HOOK_CONTENT" >"$HOOK_PATH"
