@@ -44,7 +44,7 @@ check_branch_name
 COMMIT_MSG_FILE=$1
 
 # Regular expression for the required commit message format
-PATTERN="^(feat|fix|build|breaking|chore|ci|docs|perf|refactor|revert|test)\/[a-zA-Z0-9-]+)(:)? *.+$"
+PATTERN="^(feat|fix|build|breaking|chore|ci|docs|perf|refactor|revert|test)\/[a-zA-Z0-9-]+)?(:)? *.+$"
 
 # Read the commit message
 COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
