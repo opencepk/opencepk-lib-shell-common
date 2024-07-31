@@ -5,8 +5,8 @@
   entry: hooks/git-upstream-sync.sh
   language: script
 
-- id: check-commit-msg
-  name: check-commit-msg
+- id: setup-commit-msg-hook
+  name: setup-commit-msg-hook
   description: Check commit message format
-  entry: hooks/check-commit-msg.sh
+  entry: hooks/setup-commit-msg-hook.sh
   language: script
