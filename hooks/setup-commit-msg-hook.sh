@@ -4,7 +4,7 @@ readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 source "${SCRIPT_DIR}/utils/fork_utils.sh"
 # Exit the script if running in a CI environment
 if [ "$CI" == "true" ]; then
-   exit 0
+    exit 0
 fi
 
 # Path to the commit-msg hook
@@ -26,10 +26,10 @@ check_branch_name() {
 
     # Check if the branch name matches the pattern
     if [[ ! "$BRANCH_NAME" =~ $BRANCH_PATTERN ]]; then
-        echo "ERROR: Branch name does not follow the required format 'git branch -m type/jira-number'"
+        echo "ERROR: Branch name does not follow the required format 'git branch -m type/jira-number'. Type can be any of feat, fix, build, breaking, chore, ci, docs, perf, refactor, revert, test"
         exit 1
     else
-        echo "DEBUG: Branch name matches the pattern"
+        echo "INFO: Branch name matches the pattern"
     fi
 }
 
@@ -47,7 +47,7 @@ COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
 
 # Check if the commit message matches the pattern
 if [[ ! "$COMMIT_MSG" =~ $PATTERN ]]; then
-    echo "ERROR: Commit message does not follow the required format 'type/jira-ticket: description'"
+    echo "ERROR: Commit message does not follow the required format 'type/jira-ticket: description. type can be any of feat, fix, build, breaking, chore, ci, docs, perf, refactor, revert, test'"
     exit 1
 fi
 
